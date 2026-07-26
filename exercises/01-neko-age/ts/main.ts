@@ -19,7 +19,25 @@ function catAgeToHumanAge(catAge: number): number {
     }
 }
 
+type CatLifestage = "子猫～若猫" | "成猫" | "シニア猫"
+
+/**
+ * 人間換算に変換した年齢からねこちゃんのライフステージを判定します
+ * @param convertedCatAge
+ */
+function judgeCatLifestage(convertedCatAge:number): CatLifestage {
+    if (convertedCatAge >= 56) {
+        return "シニア猫"
+    } else if (convertedCatAge >= 31) {
+        return "成猫"
+    } else {
+        return "子猫～若猫"
+    }
+}
+
 const nyanChanAge: number = 3
 const convertedNyanChanAge: number = catAgeToHumanAge(nyanChanAge)
+const nyanChanLifestage: CatLifestage = judgeCatLifestage(convertedNyanChanAge)
 
 console.log(`🐱ねこちゃん、いま ${convertedNyanChanAge} さい！`)
+console.log(`🐱ねこちゃん、いま ${nyanChanLifestage} ！`)
