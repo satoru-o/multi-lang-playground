@@ -35,9 +35,37 @@ function judgeCatLifestage(convertedCatAge:number): CatLifestage {
     }
 }
 
+type CatComment = "にゃっ！" | "にゃー" | "にゃ"
+/**
+ * ねこちゃんのライフステージからコメントを決定する
+ * @param CatLifestage
+ */
+function catCommentRouting(catLifestage:CatLifestage): CatComment {
+    if (catLifestage === "子猫～若猫") {
+        return "にゃっ！"
+    } else if (catLifestage === "成猫") {
+        return "にゃー"
+    } else {
+        return "にゃ"
+    }
+}
+
 const nyanChanAge: number = 3
 const convertedNyanChanAge: number = catAgeToHumanAge(nyanChanAge)
 const nyanChanLifestage: CatLifestage = judgeCatLifestage(convertedNyanChanAge)
+const nyanChanComment: CatComment = catCommentRouting(nyanChanLifestage)
 
 console.log(`🐱ねこちゃん、いま ${convertedNyanChanAge} さい！`)
 console.log(`🐱ねこちゃん、いま ${nyanChanLifestage} ！`)
+
+for (let i = 0; i < nyanChanAge; i++) {
+    const inputNyanChanAge = i + 1;
+    
+    const indexConvertedNyanChan: number = catAgeToHumanAge(inputNyanChanAge)
+    const indexNyanChanLifestage: CatLifestage = judgeCatLifestage(indexConvertedNyanChan)
+    const indexNyanChanComment: CatComment = catCommentRouting(indexNyanChanLifestage)
+
+    console.log(`${inputNyanChanAge}歳(人間年齢${indexConvertedNyanChan}歳): ${indexNyanChanComment}`)
+}
+
+console.log(`この子は現在 ${nyanChanLifestage} です。（人間年齢換算: ${convertedNyanChanAge}歳）`)
