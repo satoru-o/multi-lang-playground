@@ -1,0 +1,16 @@
+{
+  "id": "009",
+  "order": 9,
+  "difficulty": 3,
+  "title": "リスト操作",
+  "topic": "lists",
+  "prompt": "数値のリストを受け取り、[合計, 最大値] のリストを返す関数 total_and_max を定義してください。",
+  "check": {
+    "mode": "function",
+    "function": "total_and_max",
+    "cases": [
+      { "args": [[1, 2, 3]], "expected": [6, 3] },
+      { "args": [[5, 1, 9, 2]], "expected": [17, 9] }
+    ]
+  }
+}

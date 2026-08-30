@@ -1,0 +1,16 @@
+{
+  "id": "008",
+  "order": 8,
+  "difficulty": 3,
+  "title": "文字列操作",
+  "topic": "strings",
+  "prompt": "文字列を受け取り、大文字に変換して末尾に \"!\" を3つ付けて返す関数 shout を定義してください（例: \"hi\" -> \"HI!!!\"）。",
+  "check": {
+    "mode": "function",
+    "function": "shout",
+    "cases": [
+      { "args": ["hi"], "expected": "HI!!!" },
+      { "args": ["python"], "expected": "PYTHON!!!" }
+    ]
+  }
+}

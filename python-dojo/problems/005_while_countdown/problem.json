@@ -1,0 +1,12 @@
+{
+  "id": "005",
+  "order": 5,
+  "difficulty": 2,
+  "title": "while ループでカウントダウン",
+  "topic": "loops",
+  "prompt": "while文を使って5から1まで1行ずつカウントダウンし、最後に「発射！」と出力してください。",
+  "check": {
+    "mode": "stdout",
+    "expected_stdout": "5\n4\n3\n2\n1\n発射！\n"
+  }
+}

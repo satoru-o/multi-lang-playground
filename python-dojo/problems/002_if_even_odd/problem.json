@@ -1,0 +1,12 @@
+{
+  "id": "002",
+  "order": 2,
+  "difficulty": 1,
+  "title": "if / else（偶数・奇数判定）",
+  "topic": "conditionals",
+  "prompt": "変数 number に 7 を代入し、偶数なら「偶数です」、奇数なら「奇数です」と出力してください。",
+  "check": {
+    "mode": "stdout",
+    "expected_stdout": "奇数です\n"
+  }
+}

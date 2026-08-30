@@ -1,0 +1,12 @@
+{
+  "id": "003",
+  "order": 3,
+  "difficulty": 1,
+  "title": "if / elif / else（3段階判定）",
+  "topic": "conditionals",
+  "prompt": "変数 score に 85 を代入し、80以上なら「合格」、50以上80未満なら「もう少し」、それ未満なら「要復習」と出力してください。",
+  "check": {
+    "mode": "stdout",
+    "expected_stdout": "合格\n"
+  }
+}

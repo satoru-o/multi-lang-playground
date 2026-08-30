@@ -1,3 +1,7 @@
 __pycache__/
 node_modules/
 *.pyc
+
+# python-dojo: 実行のたびに書き換わる個人の進捗・作業状態はコミットしない
+python-dojo/state/
+python-dojo/workspace/

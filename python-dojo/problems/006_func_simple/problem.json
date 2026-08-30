@@ -1,0 +1,17 @@
+{
+  "id": "006",
+  "order": 6,
+  "difficulty": 2,
+  "title": "簡単な関数：偶数判定",
+  "topic": "functions",
+  "prompt": "整数を受け取り、偶数なら True、奇数なら False を返す関数 is_even を定義してください。",
+  "check": {
+    "mode": "function",
+    "function": "is_even",
+    "cases": [
+      { "args": [4], "expected": true },
+      { "args": [7], "expected": false },
+      { "args": [0], "expected": true }
+    ]
+  }
+}

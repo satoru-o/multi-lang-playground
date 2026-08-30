@@ -1,0 +1,12 @@
+{
+  "id": "001",
+  "order": 1,
+  "difficulty": 1,
+  "title": "変数と出力",
+  "topic": "variables",
+  "prompt": "変数 name に \"Python\" という文字列を代入し、f-stringで「こんにちは、Pythonさん」と出力してください。",
+  "check": {
+    "mode": "stdout",
+    "expected_stdout": "こんにちは、Pythonさん\n"
+  }
+}

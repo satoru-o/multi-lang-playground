@@ -1,0 +1,16 @@
+{
+  "id": "010",
+  "order": 10,
+  "difficulty": 3,
+  "title": "リスト + ループ + 条件分岐の組み合わせ",
+  "topic": "lists",
+  "prompt": "数値のリストを受け取り、偶数だけを取り出した新しいリストを元の順序のまま返す関数 even_only を定義してください。",
+  "check": {
+    "mode": "function",
+    "function": "even_only",
+    "cases": [
+      { "args": [[1, 2, 3, 4, 5, 6]], "expected": [2, 4, 6] },
+      { "args": [[7, 9]], "expected": [] }
+    ]
+  }
+}

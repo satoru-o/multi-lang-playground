@@ -1,0 +1,17 @@
+{
+  "id": "007",
+  "order": 7,
+  "difficulty": 2,
+  "title": "関数定義（複数引数 + 条件分岐を含む戻り値）",
+  "topic": "functions",
+  "prompt": "2つの整数 a, b を受け取り、大きい方の値を返す関数 larger を定義してください（同じ値の場合は a を返す）。",
+  "check": {
+    "mode": "function",
+    "function": "larger",
+    "cases": [
+      { "args": [3, 5], "expected": 5 },
+      { "args": [10, 2], "expected": 10 },
+      { "args": [4, 4], "expected": 4 }
+    ]
+  }
+}

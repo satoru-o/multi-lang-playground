@@ -1,0 +1,12 @@
+{
+  "id": "004",
+  "order": 4,
+  "difficulty": 2,
+  "title": "for ループ + range で合計計算",
+  "topic": "loops",
+  "prompt": "for文と range(1, 11) を使って1から10までの合計を計算し、結果を出力してください。",
+  "check": {
+    "mode": "stdout",
+    "expected_stdout": "55\n"
+  }
+}
