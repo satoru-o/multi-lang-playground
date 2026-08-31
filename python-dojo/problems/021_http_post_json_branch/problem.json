@@ -1,0 +1,17 @@
+{
+  "id": "021",
+  "order": 21,
+  "difficulty": 5,
+  "title": "JSONリクエストボディで分岐",
+  "topic": "http",
+  "prompt": "Handler クラスの do_POST を実装してください。POST / へのリクエストで、本文のJSONの action キーが \"pet\" なら「🐱ふにゃ〜ん」、\"feed\" なら「🐱もぐもぐ」、それ以外なら「🐱？」と返してください。（Content-Lengthヘッダーの値だけ self.rfile.read() で読み取り、json.loads でパースします）",
+  "check": {
+    "mode": "http",
+    "handler": "Handler",
+    "requests": [
+      { "method": "POST", "path": "/", "json": { "action": "pet" }, "expected_status": 200, "expected_body": "🐱ふにゃ〜ん" },
+      { "method": "POST", "path": "/", "json": { "action": "feed" }, "expected_status": 200, "expected_body": "🐱もぐもぐ" },
+      { "method": "POST", "path": "/", "json": { "action": "sleep" }, "expected_status": 200, "expected_body": "🐱？" }
+    ]
+  }
+}

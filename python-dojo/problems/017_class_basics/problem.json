@@ -1,0 +1,28 @@
+{
+  "id": "017",
+  "order": 17,
+  "difficulty": 4,
+  "title": "簡単なクラス定義",
+  "topic": "classes",
+  "prompt": "名前と年齢を持つクラス Cat を定義してください。__init__(self, name, age) で受け取った値を self.name, self.age に保存し、「たまは3歳です」のような文字列を返すメソッド describe(self) を実装してください。",
+  "check": {
+    "mode": "class",
+    "class": "Cat",
+    "instances": [
+      {
+        "init_args": ["たま", 3],
+        "checks": [
+          { "kind": "attr", "name": "name", "expected": "たま" },
+          { "kind": "attr", "name": "age", "expected": 3 },
+          { "kind": "method", "name": "describe", "args": [], "expected": "たまは3歳です" }
+        ]
+      },
+      {
+        "init_args": ["ミケ", 5],
+        "checks": [
+          { "kind": "method", "name": "describe", "args": [], "expected": "ミケは5歳です" }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "id": "013",
+  "order": 13,
+  "difficulty": 3,
+  "title": "タプルの基本（分解代入）",
+  "topic": "tuples",
+  "prompt": "(名前, 年齢) の形のデータ cat を受け取り、「たまは3歳です」のような文字列を、分解代入（name, age = cat）を使って作って返す関数 describe_cat を定義してください。",
+  "check": {
+    "mode": "function",
+    "function": "describe_cat",
+    "cases": [
+      { "args": [["たま", 3]], "expected": "たまは3歳です" },
+      { "args": [["ミケ", 5]], "expected": "ミケは5歳です" }
+    ]
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "id": "020",
+  "order": 20,
+  "difficulty": 5,
+  "title": "POSTを受け取る：/cat/pet",
+  "topic": "http",
+  "prompt": "Handler クラスに do_POST を実装し、POST /cat/pet へのリクエストに対してステータス200・本文「🐱ふにゃ〜ん」を返してください。",
+  "check": {
+    "mode": "http",
+    "handler": "Handler",
+    "requests": [
+      { "method": "POST", "path": "/cat/pet", "expected_status": 200, "expected_body": "🐱ふにゃ〜ん" }
+    ]
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "id": "011",
+  "order": 11,
+  "difficulty": 3,
+  "title": "辞書の基本",
+  "topic": "dicts",
+  "prompt": "辞書 data を受け取り、キー \"name\" の値を返す関数 get_name を定義してください。ただし \"name\" キーが存在しない場合は \"名無し\" を返してください。",
+  "check": {
+    "mode": "function",
+    "function": "get_name",
+    "cases": [
+      { "args": [{ "name": "たま" }], "expected": "たま" },
+      { "args": [{}], "expected": "名無し" },
+      { "args": [{ "name": "ミケ", "age": 2 }], "expected": "ミケ" }
+    ]
+  }
+}

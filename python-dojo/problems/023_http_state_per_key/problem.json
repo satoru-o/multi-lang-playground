@@ -1,0 +1,20 @@
+{
+  "id": "023",
+  "order": 23,
+  "difficulty": 6,
+  "title": "名前ごとの状態管理（複数の猫）",
+  "topic": "http",
+  "prompt": "Handler クラスに、POST /cat/feed と POST /cat/status を実装してください。どちらも本文JSON {\"name\": \"たま\"} の形で猫の名前を受け取ります。/cat/feed はその名前の満腹度を+1してから、/cat/status は+1せずに、{\"name\": 名前, \"満腹度\": N} を返してください。複数の猫の満腹度を名前ごとに別々に管理してください（まだ出てきていない名前は満腹度0として扱います）。",
+  "check": {
+    "mode": "http",
+    "handler": "Handler",
+    "requests": [
+      { "method": "POST", "path": "/cat/feed", "json": { "name": "たま" }, "expected_status": 200, "expected_json": { "name": "たま", "満腹度": 1 } },
+      { "method": "POST", "path": "/cat/feed", "json": { "name": "たま" }, "expected_status": 200, "expected_json": { "name": "たま", "満腹度": 2 } },
+      { "method": "POST", "path": "/cat/status", "json": { "name": "たま" }, "expected_status": 200, "expected_json": { "name": "たま", "満腹度": 2 } },
+      { "method": "POST", "path": "/cat/status", "json": { "name": "ミケ" }, "expected_status": 200, "expected_json": { "name": "ミケ", "満腹度": 0 } },
+      { "method": "POST", "path": "/cat/feed", "json": { "name": "ミケ" }, "expected_status": 200, "expected_json": { "name": "ミケ", "満腹度": 1 } },
+      { "method": "POST", "path": "/cat/status", "json": { "name": "たま" }, "expected_status": 200, "expected_json": { "name": "たま", "満腹度": 2 } }
+    ]
+  }
+}

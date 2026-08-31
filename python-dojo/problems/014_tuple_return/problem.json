@@ -1,0 +1,16 @@
+{
+  "id": "014",
+  "order": 14,
+  "difficulty": 3,
+  "title": "タプルを返す関数",
+  "topic": "tuples",
+  "prompt": "整数のリスト numbers を受け取り、(合計, 平均) のタプルを返す関数 sum_and_avg を定義してください。",
+  "check": {
+    "mode": "function",
+    "function": "sum_and_avg",
+    "cases": [
+      { "args": [[1, 2, 3, 4]], "expected": [10, 2.5] },
+      { "args": [[10, 20]], "expected": [30, 15.0] }
+    ]
+  }
+}

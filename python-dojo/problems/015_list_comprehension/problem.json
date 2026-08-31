@@ -1,0 +1,16 @@
+{
+  "id": "015",
+  "order": 15,
+  "difficulty": 3,
+  "title": "リスト内包表記",
+  "topic": "comprehensions",
+  "prompt": "数値のリストを受け取り、3の倍数だけを取り出した新しいリストをリスト内包表記で作って返す関数 multiples_of_three を定義してください。",
+  "check": {
+    "mode": "function",
+    "function": "multiples_of_three",
+    "cases": [
+      { "args": [[1, 2, 3, 4, 5, 6, 9]], "expected": [3, 6, 9] },
+      { "args": [[1, 2, 4]], "expected": [] }
+    ]
+  }
+}

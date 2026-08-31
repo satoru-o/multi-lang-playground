@@ -1,0 +1,15 @@
+{
+  "id": "019",
+  "order": 19,
+  "difficulty": 5,
+  "title": "最小のHTTPサーバー：GET /",
+  "topic": "http",
+  "prompt": "http.server の BaseHTTPRequestHandler を継承したクラス Handler を定義し、GET / へのリクエストに対してステータス200・本文「🐱ねこサーバーです」を返す do_GET メソッドを実装してください。（サーバーの起動処理は書かなくてOKです。dojo.py側が Handler クラスを使ってテスト用のサーバーを立ち上げます）",
+  "check": {
+    "mode": "http",
+    "handler": "Handler",
+    "requests": [
+      { "method": "GET", "path": "/", "expected_status": 200, "expected_body": "🐱ねこサーバーです" }
+    ]
+  }
+}

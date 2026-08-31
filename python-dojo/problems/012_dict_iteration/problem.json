@@ -1,0 +1,17 @@
+{
+  "id": "012",
+  "order": 12,
+  "difficulty": 3,
+  "title": "辞書の走査",
+  "topic": "dicts",
+  "prompt": "商品名と価格の辞書 prices を受け取り、for key, value in prices.items() を使って合計金額を返す関数 total_price を定義してください。",
+  "check": {
+    "mode": "function",
+    "function": "total_price",
+    "cases": [
+      { "args": [{ "りんご": 100, "みかん": 50 }], "expected": 150 },
+      { "args": [{}], "expected": 0 },
+      { "args": [{ "a": 1, "b": 2, "c": 3 }], "expected": 6 }
+    ]
+  }
+}

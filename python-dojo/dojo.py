@@ -17,10 +17,14 @@
 from __future__ import annotations
 
 import argparse
+import http.server
 import importlib.util
 import json
 import subprocess
 import sys
+import threading
+import urllib.error
+import urllib.request
 from datetime import datetime
 from pathlib import Path
 
@@ -206,11 +210,20 @@ def run_stdout_check(check: dict) -> tuple[bool, str]:
     return False, f"出力が一致しません。\n  期待値: {expected!r}\n  実際の出力: {actual!r}"
 
 
-def run_function_check(check: dict) -> tuple[bool, str]:
+def load_answer_module():
+    """workspace/answer.py を使い捨てのモジュールとしてロードする。
+
+    sys.modules には登録しないため、check を実行するたびに毎回まっさらな状態から読み直される。
+    """
     spec = importlib.util.spec_from_file_location("answer", ANSWER_PATH)
     module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def run_function_check(check: dict) -> tuple[bool, str]:
     try:
-        spec.loader.exec_module(module)
+        module = load_answer_module()
     except Exception as e:
         return False, f"実行時にエラーが発生しました: {e!r}"
 
@@ -225,14 +238,154 @@ def run_function_check(check: dict) -> tuple[bool, str]:
         kwargs = case.get("kwargs", {})
         try:
             actual = fn(*args, **kwargs)
-            ok = actual == case["expected"]
+            display_actual = actual
+            compare_actual = list(actual) if isinstance(actual, tuple) else actual
+            ok = compare_actual == case["expected"]
         except Exception as e:
-            actual = f"<例外発生: {e!r}>"
+            display_actual = f"<例外発生: {e!r}>"
             ok = False
         all_ok = all_ok and ok
         mark = "OK" if ok else "NG"
-        lines.append(f"  [{mark}] {check['function']}({', '.join(map(repr, args))}) -> {actual!r} (期待値: {case['expected']!r})")
+        lines.append(f"  [{mark}] {check['function']}({', '.join(map(repr, args))}) -> {display_actual!r} (期待値: {case['expected']!r})")
     return all_ok, "\n".join(lines)
+
+
+def run_class_check(check: dict) -> tuple[bool, str]:
+    try:
+        module = load_answer_module()
+    except Exception as e:
+        return False, f"実行時にエラーが発生しました: {e!r}"
+
+    cls = getattr(module, check["class"], None)
+    if cls is None:
+        return False, f"クラス {check['class']} が定義されていません。"
+
+    lines = []
+    all_ok = True
+    for i, instance_spec in enumerate(check["instances"], start=1):
+        init_args = instance_spec.get("init_args", [])
+        init_kwargs = instance_spec.get("init_kwargs", {})
+        try:
+            obj = cls(*init_args, **init_kwargs)
+        except Exception as e:
+            all_ok = False
+            lines.append(f"  [NG] instance{i} = {check['class']}({', '.join(map(repr, init_args))}) の作成に失敗: {e!r}")
+            continue
+
+        for c in instance_spec.get("checks", []):
+            try:
+                if c["kind"] == "attr":
+                    actual = getattr(obj, c["name"])
+                    label = f"instance{i}.{c['name']}"
+                else:
+                    args = c.get("args", [])
+                    kwargs = c.get("kwargs", {})
+                    actual = getattr(obj, c["name"])(*args, **kwargs)
+                    label = f"instance{i}.{c['name']}({', '.join(map(repr, args))})"
+                ok = actual == c["expected"]
+            except Exception as e:
+                actual = f"<例外発生: {e!r}>"
+                ok = False
+                label = f"instance{i}.{c['name']}"
+            all_ok = all_ok and ok
+            mark = "OK" if ok else "NG"
+            lines.append(f"  [{mark}] {label} -> {actual!r} (期待値: {c['expected']!r})")
+    return all_ok, "\n".join(lines)
+
+
+def _shutdown_server(server: http.server.HTTPServer, timeout: float = 2.0) -> None:
+    """serve_forever() がハンドラのバグでブロックし続けても check コマンド自体は止まらないよう、
+    shutdown() 呼び出しを別スレッドに逃がしてタイムアウト付きで待つ。"""
+    t = threading.Thread(target=server.shutdown, daemon=True)
+    t.start()
+    t.join(timeout=timeout)
+    try:
+        server.server_close()
+    except Exception:
+        pass
+
+
+def _send_http_check_request(port: int, req: dict) -> tuple[bool, str]:
+    url = f"http://127.0.0.1:{port}{req['path']}"
+    data = None
+    headers = {}
+    if "json" in req:
+        data = json.dumps(req["json"]).encode("utf-8")
+        headers["Content-Type"] = "application/json"
+
+    request = urllib.request.Request(url, data=data, method=req["method"], headers=headers)
+    try:
+        with urllib.request.urlopen(request, timeout=3) as resp:
+            status = resp.status
+            body = resp.read().decode("utf-8")
+    except urllib.error.HTTPError as e:
+        status = e.code
+        body = e.read().decode("utf-8")
+    except Exception as e:
+        return False, f"  [NG] {req['method']} {req['path']} -> リクエストが失敗しました: {e!r}"
+
+    ok = True
+    reasons = []
+    expected_status = req.get("expected_status", 200)
+    if status != expected_status:
+        ok = False
+        reasons.append(f"ステータスコード期待値: {expected_status}, 実際: {status}")
+
+    if "expected_json" in req:
+        try:
+            actual_json = json.loads(body)
+        except json.JSONDecodeError:
+            ok = False
+            reasons.append(f"レスポンスがJSONとして解析できません: {body!r}")
+        else:
+            if actual_json != req["expected_json"]:
+                ok = False
+                reasons.append(f"JSON期待値: {req['expected_json']!r}, 実際: {actual_json!r}")
+    elif "expected_body" in req:
+        if body.rstrip("\n") != req["expected_body"].rstrip("\n"):
+            ok = False
+            reasons.append(f"本文期待値: {req['expected_body']!r}, 実際: {body!r}")
+
+    mark = "OK" if ok else "NG"
+    detail = f"  [{mark}] {req['method']} {req['path']}"
+    if not ok:
+        detail += "\n    " + "\n    ".join(reasons)
+    return ok, detail
+
+
+def run_http_check(check: dict) -> tuple[bool, str]:
+    try:
+        module = load_answer_module()
+    except Exception as e:
+        return False, f"実行時にエラーが発生しました: {e!r}"
+
+    handler_cls = getattr(module, check["handler"], None)
+    if handler_cls is None:
+        return False, f"クラス {check['handler']} が定義されていません。"
+    if not (isinstance(handler_cls, type) and issubclass(handler_cls, http.server.BaseHTTPRequestHandler)):
+        return False, f"{check['handler']} は http.server.BaseHTTPRequestHandler のサブクラスではありません。"
+
+    class QuietHandler(handler_cls):
+        def log_message(self, format, *args):
+            pass
+
+    try:
+        server = http.server.HTTPServer(("127.0.0.1", 0), QuietHandler)
+    except Exception as e:
+        return False, f"サーバーの起動に失敗しました: {e!r}"
+
+    thread = threading.Thread(target=server.serve_forever, daemon=True)
+    thread.start()
+    try:
+        lines = []
+        all_ok = True
+        for req in check["requests"]:
+            ok, detail = _send_http_check_request(server.server_port, req)
+            all_ok = all_ok and ok
+            lines.append(detail)
+        return all_ok, "\n".join(lines)
+    finally:
+        _shutdown_server(server)
 
 
 def cmd_check(args: argparse.Namespace) -> None:
@@ -251,6 +404,10 @@ def cmd_check(args: argparse.Namespace) -> None:
         ok, detail = run_stdout_check(check)
     elif check["mode"] == "function":
         ok, detail = run_function_check(check)
+    elif check["mode"] == "class":
+        ok, detail = run_class_check(check)
+    elif check["mode"] == "http":
+        ok, detail = run_http_check(check)
     else:
         print(f"未対応のチェックモードです: {check['mode']}")
         return

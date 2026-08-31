@@ -1,0 +1,18 @@
+{
+  "id": "022",
+  "order": 22,
+  "difficulty": 6,
+  "title": "複数エンドポイント + 状態管理（満腹度カウンター）",
+  "topic": "http",
+  "prompt": "Handler クラスに、GET /cat/status で現在の満腹度をJSON {\"満腹度\": N} で返す do_GET と、POST /cat/feed で満腹度を+1してから同じ形式のJSONで返す do_POST を実装してください。満腹度の初期値は0とし、リクエストをまたいで値を保持してください（クラス変数やモジュール変数など、保存場所は自由です）。",
+  "check": {
+    "mode": "http",
+    "handler": "Handler",
+    "requests": [
+      { "method": "GET", "path": "/cat/status", "expected_status": 200, "expected_json": { "満腹度": 0 } },
+      { "method": "POST", "path": "/cat/feed", "expected_status": 200, "expected_json": { "満腹度": 1 } },
+      { "method": "POST", "path": "/cat/feed", "expected_status": 200, "expected_json": { "満腹度": 2 } },
+      { "method": "GET", "path": "/cat/status", "expected_status": 200, "expected_json": { "満腹度": 2 } }
+    ]
+  }
+}

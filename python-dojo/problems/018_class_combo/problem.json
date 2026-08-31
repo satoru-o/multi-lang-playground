@@ -1,0 +1,12 @@
+{
+  "id": "018",
+  "order": 18,
+  "difficulty": 4,
+  "title": "クラスの組み合わせ",
+  "topic": "classes",
+  "prompt": "017で作った Cat クラス（name, age属性、describeメソッド）と同じ形のクラスをもう一度定義してください。Cat(\"たま\", 3), Cat(\"ミケ\", 5), Cat(\"クロ\", 1) の3匹をリストに入れて、年齢の平均値を出力してください（例: 3.0 のように出力）。",
+  "check": {
+    "mode": "stdout",
+    "expected_stdout": "3.0\n"
+  }
+}

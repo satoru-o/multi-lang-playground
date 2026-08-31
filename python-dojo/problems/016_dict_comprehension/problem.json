@@ -1,0 +1,16 @@
+{
+  "id": "016",
+  "order": 16,
+  "difficulty": 3,
+  "title": "辞書内包表記",
+  "topic": "comprehensions",
+  "prompt": "文字列のリスト words を受け取り、各単語をキー、その文字数を値とする辞書を辞書内包表記で作って返す関数 word_lengths を定義してください。",
+  "check": {
+    "mode": "function",
+    "function": "word_lengths",
+    "cases": [
+      { "args": [["cat", "python"]], "expected": { "cat": 3, "python": 6 } },
+      { "args": [[]], "expected": {} }
+    ]
+  }
+}
