@@ -22,7 +22,7 @@ uv run dojo.py answer     # 模範解答を表示（誤って見ないよう確�
 uv run dojo.py skip       # どうしても詰まったら今日の問題をスキップして次へ
 uv run dojo.py show 003   # 過去/任意の問題文を読み返す（状態は変えない）
 uv run dojo.py log        # 進捗サマリを表示
-uv run dojo.py today --random   # 全問クリア後、解答済みの問題からランダムに復習出題
+uv run dojo.py today --random   # 解答済みの問題からランダムに復習出題（uv run dojo.py check で採点可能。正解しても進捗ログ（log）には記録されません）
 ```
 
 ## ディレクトリ構成

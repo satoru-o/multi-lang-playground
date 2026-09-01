@@ -122,9 +122,10 @@ def print_prompt(problem: dict) -> None:
 def cmd_today(args: argparse.Namespace) -> None:
     state = load_today_state()
 
-    if state["current_id"] and state["status"] == "assigned":
+    if state["current_id"] and state["status"] in ("assigned", "review"):
         problem = load_problem(state["current_id"])
-        print("今日の問題はまだ未解決です（先にこれを解いてください）:")
+        label = "復習問題" if state["status"] == "review" else "今日の問題"
+        print(f"{label}はまだ未解決です（先にこれを解いてください）:")
         print_prompt(problem)
         return
 
@@ -140,8 +141,18 @@ def cmd_today(args: argparse.Namespace) -> None:
         import random
 
         problem = load_problem(random.choice(sorted(solved_ids)))
+        save_today_state(
+            {
+                "current_id": problem["id"],
+                "status": "review",
+                "assigned_at": datetime.now().isoformat(timespec="seconds"),
+                "resolved_at": None,
+            }
+        )
+        reset_answer_file(problem)
         print("復習問題（ランダム出題）:")
         print_prompt(problem)
+        print(f"\n{ANSWER_PATH.relative_to(ROOT)} に答えを書いて `uv run dojo.py check` で採点してください。")
         return
 
     done_ids = read_progress_ids()
@@ -393,10 +404,11 @@ def cmd_check(args: argparse.Namespace) -> None:
     if not state["current_id"]:
         print("今日の問題がまだありません。先に `uv run dojo.py today` を実行してください。")
         return
-    if state["status"] != "assigned":
+    if state["status"] not in ("assigned", "review"):
         print("今日の問題はすでに解決済みです。`uv run dojo.py today` で次の問題に進んでください。")
         return
 
+    is_review = state["status"] == "review"
     problem = load_problem(state["current_id"])
     check = problem["check"]
 
@@ -415,7 +427,11 @@ def cmd_check(args: argparse.Namespace) -> None:
     if detail:
         print(detail)
 
-    if ok:
+    if ok and is_review:
+        print("\n正解！復習おつかれさまでした。")
+        save_today_state({"current_id": None, "status": None, "assigned_at": None, "resolved_at": None})
+        print("`uv run dojo.py today` で次の問題、`uv run dojo.py today --random` でまた復習できます。")
+    elif ok:
         print("\n合格！お疲れさまでした。")
         state["status"] = "solved"
         state["resolved_at"] = datetime.now().isoformat(timespec="seconds")
@@ -428,10 +444,14 @@ def cmd_check(args: argparse.Namespace) -> None:
 
 def cmd_skip(args: argparse.Namespace) -> None:
     state = load_today_state()
-    if not state["current_id"] or state["status"] != "assigned":
+    if not state["current_id"] or state["status"] not in ("assigned", "review"):
         print("スキップ対象の問題がありません。")
         return
     problem = load_problem(state["current_id"])
+    if state["status"] == "review":
+        save_today_state({"current_id": None, "status": None, "assigned_at": None, "resolved_at": None})
+        print(f"復習問題 {problem['id']} をスキップしました。")
+        return
     state["status"] = "skipped"
     state["resolved_at"] = datetime.now().isoformat(timespec="seconds")
     save_today_state(state)
